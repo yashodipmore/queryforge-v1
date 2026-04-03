@@ -20,6 +20,12 @@ A real-world SQL query optimization and debugging environment for AI agents.
 QueryForge trains and evaluates agents on tasks that database engineers do every day:
 fixing broken queries, optimizing slow ones, and redesigning inefficient schemas.
 
+## Submission Details
+
+- Hugging Face Space: https://huggingface.co/spaces/yashodipmore/queryforge-v1
+- Team Name: Sarthak
+- Team Members: Yashodip More, Komal Kumavat, Jaykumar Girase
+
 ## Environment Overview
 
 | Property | Value |
