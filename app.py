@@ -52,6 +52,16 @@ class StepRequest(BaseModel):
     reasoning: Optional[str] = None
 
 
+@app.get("/")
+async def root():
+    return {
+        "name": "queryforge-v1",
+        "status": "ok",
+        "message": "QueryForge-v1 is running. Use /health, /reset, /step, /state, and /tasks.",
+        "docs": "/docs",
+    }
+
+
 @app.get("/health")
 async def health():
     return {"status": "ok", "environment": "queryforge-v1", "version": "1.0.0"}
