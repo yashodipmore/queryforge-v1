@@ -1,0 +1,104 @@
+name: queryforge-v1
+version: "1.0.0"
+description: >
+  A real-world SQL query optimization and debugging environment where AI agents
+  learn to fix broken queries, optimize slow queries, and redesign inefficient
+  database schemas. Uses SQLite in-memory execution for deterministic grading.
+
+author: "yashodipmore"
+license: MIT
+tags:
+  - openenv
+  - sql
+  - database
+  - optimization
+  - real-world
+  - debugging
+
+environment:
+  type: text
+  max_steps: 10
+
+observation_space:
+  type: object
+  description: "Current query state and database context"
+  properties:
+    schema:
+      type: object
+      description: "Database schema with tables, columns, and types"
+    current_query:
+      type: string
+      description: "The SQL query agent is currently working on"
+    execution_result:
+      type: object
+      description: "Result of executing current query (rows, error, or plan)"
+    quality_metrics:
+      type: object
+      description: "Metrics: syntax_valid, row_count, estimated_cost, has_error"
+    step:
+      type: integer
+      description: "Current step number"
+    task_description:
+      type: string
+      description: "Human-readable task objective"
+
+action_space:
+  type: object
+  description: "Actions the agent can take to modify query or schema"
+  properties:
+    action_type:
+      type: string
+      enum:
+        - rewrite_query
+        - add_index
+        - analyze_table
+        - submit
+    query:
+      type: string
+      description: "New SQL query (for rewrite_query action)"
+    index_definition:
+      type: string
+      description: "Index DDL (for add_index action, e.g. CREATE INDEX ON orders(cid))"
+    table_name:
+      type: string
+      description: "Table to analyze (for analyze_table action)"
+
+reward_space:
+  type: number
+  min: 0.0
+  max: 1.0
+  description: "Partial reward at each step based on query quality improvement"
+
+tasks:
+  - id: fix_broken_query
+    name: "Fix Broken SQL Query"
+    difficulty: easy
+    description: >
+      Agent receives a SQL query with syntax errors, wrong JOINs, or missing
+      clauses. Goal: fix the query so it executes correctly and returns
+      the expected result set.
+    max_steps: 8
+
+  - id: optimize_slow_query
+    name: "Optimize Slow Query"
+    difficulty: medium
+    description: >
+      Agent receives a syntactically correct but highly inefficient query
+      doing full table scans on large tables. Goal: add indexes and/or
+      rewrite the query to reduce execution cost by at least 60%.
+    max_steps: 10
+
+  - id: schema_redesign
+    name: "Redesign Inefficient Schema"
+    difficulty: hard
+    description: >
+      Agent receives a poorly denormalized schema with data redundancy and
+      inefficient query patterns. Goal: propose a normalized schema with
+      migration queries that preserves data integrity and improves performance.
+    max_steps: 12
+
+endpoints:
+  reset: "POST /reset"
+  step: "POST /step"
+  state: "GET /state"
+  health: "GET /health"

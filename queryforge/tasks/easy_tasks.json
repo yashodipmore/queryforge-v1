@@ -1,0 +1,62 @@
+{
+  "task_id": "fix_broken_query",
+  "description": "Fix the broken SQL query so it executes correctly and returns the expected results.",
+  "max_steps": 8,
+  "scenarios": [
+    {
+      "id": "easy_001",
+      "description": "Fix missing GROUP BY clause in aggregation query",
+      "schema_sql": "CREATE TABLE orders (id INTEGER PRIMARY KEY, customer_id INTEGER, amount REAL, status TEXT); CREATE TABLE customers (id INTEGER PRIMARY KEY, name TEXT, email TEXT);",
+      "data_sql": "INSERT INTO customers VALUES (1,'Alice','alice@example.com'),(2,'Bob','bob@example.com'),(3,'Carol','carol@example.com'); INSERT INTO orders VALUES (1,1,150.0,'paid'),(2,1,200.0,'paid'),(3,2,75.0,'pending'),(4,3,300.0,'paid'),(5,2,125.0,'paid');",
+      "broken_query": "SELECT customer_id, SUM(amount) FROM orders WHERE status = 'paid'",
+      "fixed_query_example": "SELECT customer_id, SUM(amount) FROM orders WHERE status = 'paid' GROUP BY customer_id",
+      "expected_row_count": 3,
+      "expected_columns": ["customer_id", "SUM(amount)"],
+      "hint": "Aggregation functions like SUM require a GROUP BY clause when combined with non-aggregated columns."
+    },
+    {
+      "id": "easy_002",
+      "description": "Fix wrong JOIN condition causing cartesian product",
+      "schema_sql": "CREATE TABLE products (id INTEGER PRIMARY KEY, name TEXT, category_id INTEGER, price REAL); CREATE TABLE categories (id INTEGER PRIMARY KEY, name TEXT);",
+      "data_sql": "INSERT INTO categories VALUES (1,'Electronics'),(2,'Clothing'),(3,'Books'); INSERT INTO products VALUES (1,'Laptop',1,999.0),(2,'T-Shirt',2,29.0),(3,'Python Book',3,49.0),(4,'Headphones',1,199.0);",
+      "broken_query": "SELECT p.name, c.name FROM products p JOIN categories c ON p.id = c.id",
+      "fixed_query_example": "SELECT p.name, c.name FROM products p JOIN categories c ON p.category_id = c.id",
+      "expected_row_count": 4,
+      "expected_columns": ["name", "name"],
+      "hint": "The JOIN condition should link the foreign key to the primary key."
+    },
+    {
+      "id": "easy_003",
+      "description": "Fix syntax error and incorrect WHERE clause",
+      "schema_sql": "CREATE TABLE employees (id INTEGER PRIMARY KEY, name TEXT, department TEXT, salary REAL, hire_date TEXT);",
+      "data_sql": "INSERT INTO employees VALUES (1,'Alice','Engineering',95000,'2020-01-15'),(2,'Bob','Marketing',65000,'2019-06-01'),(3,'Carol','Engineering',105000,'2018-03-22'),(4,'Dave','HR',55000,'2021-09-10'),(5,'Eve','Engineering',115000,'2017-11-05');",
+      "broken_query": "SELECT name, salary FROM employees WHERE department = 'Engineering' AND salary > 90000",
+      "fixed_query_example": "SELECT name, salary FROM employees WHERE department = 'Engineering' AND salary > 90000",
+      "expected_row_count": 3,
+      "expected_columns": ["name", "salary"],
+      "hint": "Check all parentheses are balanced and string literals use single quotes."
+    },
+    {
+      "id": "easy_004",
+      "description": "Fix HAVING without GROUP BY",
+      "schema_sql": "CREATE TABLE sales (id INTEGER PRIMARY KEY, product TEXT, region TEXT, amount REAL, sale_date TEXT);",
+      "data_sql": "INSERT INTO sales VALUES (1,'Widget','North',500,'2024-01-01'),(2,'Gadget','South',300,'2024-01-02'),(3,'Widget','South',450,'2024-01-03'),(4,'Gadget','North',600,'2024-01-04'),(5,'Widget','North',350,'2024-01-05'),(6,'Gadget','South',400,'2024-01-06');",
+      "broken_query": "SELECT product, SUM(amount) as total FROM sales HAVING SUM(amount) > 800",
+      "fixed_query_example": "SELECT product, SUM(amount) as total FROM sales GROUP BY product HAVING SUM(amount) > 800",
+      "expected_row_count": 2,
+      "expected_columns": ["product", "total"],
+      "hint": "HAVING filters groups, you need GROUP BY before HAVING."
+    },
+    {
+      "id": "easy_005",
+      "description": "Fix ambiguous column name in JOIN query",
+      "schema_sql": "CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT, created_at TEXT); CREATE TABLE posts (id INTEGER PRIMARY KEY, user_id INTEGER, title TEXT, created_at TEXT);",
+      "data_sql": "INSERT INTO users VALUES (1,'Alice','2023-01-01'),(2,'Bob','2023-02-01'); INSERT INTO posts VALUES (1,1,'First Post','2024-01-01'),(2,1,'Second Post','2024-02-01'),(3,2,'Hello World','2024-01-15');",
+      "broken_query": "SELECT name, title, created_at FROM users u JOIN posts p ON u.id = p.user_id",
+      "fixed_query_example": "SELECT u.name, p.title, p.created_at FROM users u JOIN posts p ON u.id = p.user_id",
+      "expected_row_count": 3,
+      "expected_columns": ["name", "title", "created_at"],
+      "hint": "When multiple tables have columns with the same name, qualify with table alias."
+    }
+  ]
+}
