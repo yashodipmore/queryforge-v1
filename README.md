@@ -1,6 +1,6 @@
 ---
 title: QueryForge-v1
-emoji: "mag"
+emoji: "🔍"
 colorFrom: blue
 colorTo: green
 sdk: docker
