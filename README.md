@@ -20,8 +20,9 @@ A real-world SQL query optimization and debugging environment for AI agents.
 QueryForge trains and evaluates agents on tasks that database engineers do every day:
 fixing broken queries, optimizing slow ones, and redesigning inefficient schemas.
 
-## Submission Details
+## Submission Quick Links
 
+- GitHub Repository: https://github.com/yashodipmore/queryforge-v1
 - Hugging Face Space: https://huggingface.co/spaces/yashodipmore/queryforge-v1
 - Team Name: Sarthak
 - Team Members: Yashodip More, Komal Kumavat, Jaykumar Girase
@@ -102,6 +103,7 @@ curl http://localhost:7860/state
 ### Run Baseline Inference
 
 ```bash
+# HF_TOKEN is required
 export HF_TOKEN=your_token_here
 export API_BASE_URL=https://router.huggingface.co/v1
 export MODEL_NAME=Qwen/Qwen2.5-72B-Instruct
@@ -114,8 +116,19 @@ python inference.py
 
 ```bash
 pip install openenv-core
+
+# If the CLI is available in your environment
 openenv validate
 ```
+
+## Pre-Submission Checklist
+
+- openenv.yaml present and task IDs match implementation
+- inference.py in repository root and START/STEP/END log format preserved
+- /health, /reset, /step, /state endpoints return valid responses
+- Rewards stay in [0.0, 1.0] and graders remain deterministic
+- docker build succeeds and container serves on port 7860
+- GitHub repository and Hugging Face Space links are public and accessible
 
 ## License
 
