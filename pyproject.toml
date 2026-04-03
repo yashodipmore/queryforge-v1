@@ -32,6 +32,9 @@ dependencies = [
 Repository = "https://github.com/yashodipmore/queryforge-v1"
 Homepage = "https://huggingface.co/spaces/yashodipmore/queryforge-v1"
 
+[project.scripts]
+server = "server.app:main"
+
 [tool.setuptools.packages.find]
-include = ["queryforge*"]
+include = ["queryforge*", "server*"]
 exclude = ["tests*"]
