@@ -134,13 +134,12 @@ class QueryForgeEnv:
                 info["error"] = "rewrite_query requires a non-empty 'query' field."
                 penalty = 0.05
             else:
-                if action.query.strip() == self._prev_query.strip():
+                if action.query.strip() == self.current_query.strip():
                     self._repeated_action_count += 1
                     penalty = 0.05 * self._repeated_action_count
                     info["warning"] = "Same query submitted again. Penalty applied."
                 else:
                     self._repeated_action_count = 0
-                    self._prev_query = self.current_query
                     self.current_query = action.query.strip()
 
         elif action.action_type == "add_index":
