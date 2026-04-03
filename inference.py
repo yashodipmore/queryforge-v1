@@ -25,7 +25,8 @@ from openai import OpenAI
 
 API_BASE_URL = os.getenv("API_BASE_URL", "https://router.huggingface.co/v1")
 MODEL_NAME = os.getenv("MODEL_NAME", "Qwen/Qwen2.5-72B-Instruct")
-API_KEY = os.getenv("HF_TOKEN") or os.getenv("API_KEY", "hf_placeholder")
+HF_TOKEN = os.getenv("HF_TOKEN")
+LOCAL_IMAGE_NAME = os.getenv("LOCAL_IMAGE_NAME")
 QUERYFORGE_URL = os.getenv("QUERYFORGE_URL", "http://localhost:7860")
 BENCHMARK = "queryforge-v1"
 
@@ -274,7 +275,10 @@ def run_task(client: OpenAI, task: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def main() -> None:
-    client = OpenAI(base_url=API_BASE_URL, api_key=API_KEY)
+    if not HF_TOKEN:
+        raise RuntimeError("HF_TOKEN environment variable is required.")
+
+    client = OpenAI(base_url=API_BASE_URL, api_key=HF_TOKEN)
 
     print("[DEBUG] QueryForge-v1 Baseline Inference", flush=True)
     print(f"[DEBUG] Model: {MODEL_NAME}", flush=True)
